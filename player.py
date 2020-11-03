@@ -3,10 +3,12 @@ from tkinter import filedialog #ttk
 import pygame
 import time
 from mutagen.mp3 import MP3 #pip isntall mutagen
+import tkinter.ttk as ttk
+
 root =Tk()
 
 root.title("Mp3 Player")
-root.geometry("700x400")
+root.geometry("700x500")
 
 # Initialize Pygame
 
@@ -31,6 +33,16 @@ def play_time():
     #Convert to time format
     converted_song_length= time.strftime("%M:%S", time.gmtime(song_length))
 
+    # Slider length to song length
+    song_slider.config(to=song_length)
+    my_label.config(text=song_slider.get())
+
+    # Move slider along 1 sec at a time
+
+    next_time = int(song_slider.get()) + 1
+    # Output new time value to timer
+    song_slider.config(value=next_time)
+    
     # status_bar.config(text=converted_song_length)
 
     #Add time to status bar
@@ -168,16 +180,38 @@ def previous_song():
     # set active bar to the next song
     playlist_box.select_set(next_one,last=None)
 
+# Create Volume Function
+def volume(x):
+    pygame.mixer.music.set_volume(volume_slider.get())
 
+# slide function
+def slide(x):
+    pass
 
+# Create main frame
+main_frame= Frame(root)
+main_frame.pack(pady=20)
+
+# Volume slider frame
+volume_frame=LabelFrame(main_frame, text="Volume")
+volume_frame.grid(row=0, column=1)
+
+# Create volume slider 
+volume_slider= ttk.Scale(volume_frame, from_=0, to=1, orient=VERTICAL, length=125, value=1 ,command= volume)
+volume_slider.pack(pady=10)
+
+# Create song slider
+song_slider= ttk.Scale(main_frame, from_=0, to=100, orient=HORIZONTAL, length=360, value=0 ,command= slide)
+song_slider.grid(row=2, column=0,pady=20)
 # Playlist Box
-playlist_box =Listbox(root, bg="black", fg="green", width =60, selectbackground="green", selectforeground="black")
-playlist_box.pack(pady=20)
+playlist_box =Listbox(main_frame, bg="black", fg="green", width =60, selectbackground="green", selectforeground="black")
+playlist_box.grid(row=0, column=0)
+
 
 
 # Create buttons frame 
-control_frame =Frame(root)
-control_frame.pack(pady=20)
+control_frame =Frame(main_frame)
+control_frame.grid(row=1, column=0,pady=20)
 
 
 # Defining button images
