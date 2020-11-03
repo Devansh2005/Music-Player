@@ -17,6 +17,9 @@ pygame.mixer.init()
 # CREATE a funcy=tion to deal with time
 
 def play_time():
+    # check if song is topped
+    if stopped:
+        return
     # Current time
     current_time=pygame.mixer.music.get_pos() /1000
     # time to minutes and second from ms
@@ -37,12 +40,29 @@ def play_time():
     song_slider.config(to=song_length)
     my_label.config(text=song_slider.get())
 
-    # Move slider along 1 sec at a time
+    # Check to see if song is over and end the time at bottom
+    if int(song_slider.get())== int(song_length):
+        stop()
+        
 
-    next_time = int(song_slider.get()) + 1
-    # Output new time value to timer
-    song_slider.config(value=next_time)
-    
+    elif paused :
+        # To see if paused -if so, then pass
+        pass
+    else:
+
+        # Move slider along 1 sec at a time
+
+        next_time = int(song_slider.get()) + 1
+        # Output new time value to slider and to length of the song
+        song_slider.config(to=song_length, value=next_time)
+
+        #convert slider postition to time format
+        converted_curernt_time= time.strftime("%M:%S", time.gmtime(int(song_slider.get())))
+        
+        # Output slider
+        status_bar.config(text=f'Time: {converted_curernt_time} of {converted_song_length}')
+
+
     # status_bar.config(text=converted_song_length)
 
     #Add time to status bar
@@ -95,6 +115,9 @@ def delete_all_song():
 
 # Create play button function
 def play():
+    # set stopped to false
+    global stopped
+    stopped=False 
     song=playlist_box.get(ACTIVE)
     song=f"C:/Users/Devansh/Desktop/mp3player/mp3/{song}.mp3"  #-- get directory
     # my_label.config(text=song)
@@ -106,7 +129,10 @@ def play():
 
     # GET SONG TIME
     play_time()
-    
+# Create a global stopped variable
+global stopped
+stopped= False
+
 def stop():
     # Stop song
     pygame.mixer.music.stop()
@@ -116,6 +142,13 @@ def stop():
     playlist_box.selection_clear(ACTIVE)
 
     status_bar.config(text="")
+    # Set slider to zero
+    song_slider.config(value=0)
+
+    # Set stopped variable to true
+    global stopped
+    stopped= True
+
 # Create paused variable
 
 global paused 
@@ -135,6 +168,10 @@ def pause(is_paused):
         paused=True
 #Next song function
 def next_song():
+    # Reset solder position and status bar
+    status_bar.config(text="")
+    song_slider.config(value=0)
+
     #get current song in number
     next_one = playlist_box.curselection()
     # Add one to the current song
@@ -159,6 +196,9 @@ def next_song():
 #Previous song function
 
 def previous_song():
+    # Reset solder position and status bar
+    status_bar.config(text="")
+    song_slider.config(value=0)
     #get current song in number
     next_one = playlist_box.curselection()
     # Add one to the current song
@@ -186,7 +226,14 @@ def volume(x):
 
 # slide function
 def slide(x):
-    pass
+    song=playlist_box.get(ACTIVE)
+    song=f"C:/Users/Devansh/Desktop/mp3player/mp3/{song}.mp3"  #-- get directory
+    # my_label.config(text=song)
+
+    # Load song with pygame mixer
+    pygame.mixer.music.load(song)
+    # Load song with pygame mixer
+    pygame.mixer.music.play(loops=0, start=song_slider.get())
 
 # Create main frame
 main_frame= Frame(root)
