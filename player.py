@@ -315,8 +315,8 @@ status_bar.pack(fill=X, side=BOTTOM, ipady=2)
 
 # Temporary label
 
-my_label= Label(root, text="", bg="black", fg="green")
-my_label.pack(pady=20)
+# my_label= Label(root, text="", bg="black", fg="green")
+# my_label.pack(pady=20)
 
 
 root.mainloop()
